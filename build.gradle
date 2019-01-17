@@ -10,6 +10,7 @@ buildscript {
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${sonarqubeGradleVersion}"
         classpath "se.transmode.gradle:gradle-docker:${dockerPluginVersion}"
         classpath "com.adarshr:gradle-test-logger-plugin:${gradleTestLoggerVersion}"
+        classpath('gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.21.0')
     }
 }
 
@@ -21,10 +22,16 @@ apply from: 'gradle/spock.gradle'
 apply from: 'gradle/boot.gradle'
 apply from: 'gradle/sonar.gradle'
 apply plugin: "com.adarshr.test-logger"
+apply plugin: 'com.palantir.docker'
 
 group = 'pl.java.scalatech'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
+
+jar {
+    baseName = 'gradle-and-boot'
+    version =  '0.1.0'
+}
 
 repositories {
     mavenCentral()
@@ -87,4 +94,18 @@ testlogger {
     showFailed true
     showSkippedStandardStreams true
     showFailedStandardStreams true
+}
+
+task unpack(type: Copy) {
+    dependsOn bootJar
+    from(zipTree(tasks.bootJar.outputs.files.singleFile))
+    into("build/dependency")
+}
+docker {
+    tags "${project.version}"
+    dockerfile project.file('Dockerfile')
+    name "${project.group}/${bootJar.baseName.toLowerCase()}"
+    copySpec.from(tasks.unpack.outputs).into("dependency")
+    buildArgs(['DEPENDENCY': "dependency"])
+
 }
