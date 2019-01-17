@@ -50,7 +50,9 @@ bootRun {
         '-Dfile.encoding=UTF8',
         '-Xms128m',
         '-Xmx256m',
-        '-XX:+UseG1GC'
+        '-XX:+UseG1GC',
+        '-noverify',
+        '-XX:TieredStopAtLevel=1'
     ]
     def gcOpts = [
         '-verbose:gc',

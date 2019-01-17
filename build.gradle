@@ -41,8 +41,11 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-webflux')
     implementation( 'io.micrometer:micrometer-registry-jmx:latest.release')
     implementation( "io.micrometer:micrometer-registry-prometheus")
-    implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
-    implementation('org.springframework.cloud:spring-cloud-stream-reactive')
+
+	implementation('org.springframework.cloud:spring-cloud-stream-binder-rabbit')
+	implementation('org.springframework.cloud:spring-cloud-stream-reactive')
+	compileOnly("org.springframework:spring-context-indexer:5.1.3.RELEASE")
+
     implementation group: 'com.github.javafaker', name: 'javafaker', version: '0.16'
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 
